@@ -1,4 +1,4 @@
-# DeveloperTI
+# Product Mentor's sharp comment
 
 一个复古游戏机风格的项目计划书锐评 MVP。
 
