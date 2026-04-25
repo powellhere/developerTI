@@ -28,6 +28,7 @@ const toleranceValue = document.querySelector("#toleranceValue");
 const investorSoundFiles = {
   paul_graham: "paul.mp3",
   zhang_yiming: "张一鸣.mp3",
+  karpathy: "卡帕西.mp3",
   kris_jenner: "kris jenner.mp3",
   mrbeast: "mrbeast.mp3",
   trump: "trump.mp3",
