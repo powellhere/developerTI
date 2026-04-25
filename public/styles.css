@@ -417,28 +417,50 @@ h3 {
 }
 
 .rank-strip span {
-  display: grid;
+  display: flex;
   min-width: 0;
-  overflow: visible;
+  overflow: hidden;
   min-height: 44px;
-  place-items: center;
+  align-items: center;
+  justify-content: center;
   color: var(--cream);
   font-family: var(--font-mono);
+  font-size: 18px;
   font-weight: 900;
   line-height: 1;
   white-space: nowrap;
+  text-transform: uppercase;
   background: var(--ink);
   border: var(--outline-thin);
   box-shadow: 4px 5px 0 rgba(68, 35, 12, 0.2);
 }
 
+.status-strip span {
+  min-height: 52px;
+  padding: 0 var(--space-sm);
+  font-size: 13px;
+  text-align: center;
+}
+
 .rank-strip span:nth-child(1) { background: var(--red); }
 .rank-strip span:nth-child(2) { color: var(--ink); background: var(--yellow); }
 .rank-strip span:nth-child(3) { color: var(--ink); background: var(--green); }
-.rank-strip span:nth-child(4) {
+.rank-strip .rank-npc {
   color: var(--ink);
   background: var(--teal);
+  background-image: none;
+  border-color: var(--ink);
+  outline: 0;
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+  word-break: keep-all;
   box-shadow: 4px 5px 0 rgba(68, 35, 12, 0.2);
+}
+
+.rank-strip .rank-npc::before,
+.rank-strip .rank-npc::after {
+  display: none;
+  content: none;
 }
 .rank-strip span:nth-child(5) { background: #8f7354; }
 
@@ -809,8 +831,10 @@ select:focus {
 }
 
 .grade-badge span {
-  font-size: 29px;
+  padding: 0 var(--space-sm);
+  font-size: 18px;
   font-weight: 900;
+  text-align: center;
 }
 
 .grade-badge strong {
@@ -875,23 +899,84 @@ select:focus {
 
 .dimension-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 120px;
-  gap: var(--space-md);
-  align-items: center;
-  padding: var(--space-md);
+  grid-template-columns: minmax(0, 1fr) 140px;
+  gap: var(--space-lg);
+  align-items: stretch;
+  padding: var(--space-lg);
   background: var(--cream);
   border: 2px solid var(--ink);
+}
+
+.dimension-copy {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.dimension-title-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: baseline;
+}
+
+.dimension-title-line strong {
+  font-family: var(--font-display);
+  font-size: 24px;
+}
+
+.dimension-title-line span {
+  padding: 2px var(--space-sm);
+  color: var(--cream);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 900;
+  background: var(--ink);
+}
+
+.dimension-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-sm);
+  margin: 0;
+}
+
+.dimension-detail-grid div {
+  padding: var(--space-sm);
+  background: rgba(255, 231, 166, 0.74);
+  border: 2px dashed rgba(68, 35, 12, 0.42);
+}
+
+.dimension-detail-grid dt {
+  margin-bottom: 2px;
+  color: var(--red);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.dimension-detail-grid dd {
+  margin: 0;
+  line-height: 1.45;
 }
 
 .score-meter {
   display: grid;
   gap: var(--space-sm);
+  align-content: center;
 }
 
 .score-meter span {
   color: var(--ink);
   font-family: var(--font-display);
   font-size: 26px;
+  font-weight: 900;
+  text-align: right;
+}
+
+.score-meter em {
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-style: normal;
   font-weight: 900;
   text-align: right;
 }
@@ -927,6 +1012,36 @@ li + li {
   color: var(--red);
 }
 
+.share-art-placeholder {
+  display: grid;
+  min-height: 180px;
+  margin-bottom: var(--space-lg);
+  place-items: center;
+  padding: var(--space-lg);
+  text-align: center;
+  background:
+    linear-gradient(45deg, rgba(68, 35, 12, 0.08) 25%, transparent 25% 50%, rgba(68, 35, 12, 0.08) 50% 75%, transparent 75%),
+    var(--cream);
+  background-size: 22px 22px;
+  border: var(--outline-thin);
+}
+
+.share-art-placeholder span,
+.share-art-placeholder small {
+  font-family: var(--font-mono);
+  font-weight: 900;
+}
+
+.share-art-placeholder strong {
+  font-family: var(--font-display);
+  font-size: 52px;
+  line-height: 1;
+}
+
+.share-art-placeholder small {
+  color: var(--ink-soft);
+}
+
 .share-card h3 {
   font-size: 27px;
 }
@@ -959,7 +1074,7 @@ li + li {
 
 .trait-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-sm);
   margin-top: var(--space-md);
 }
@@ -1100,6 +1215,10 @@ li + li {
   .rank-row,
   .dimension-row,
   .project-chip {
+    grid-template-columns: 1fr;
+  }
+
+  .dimension-detail-grid {
     grid-template-columns: 1fr;
   }
 

@@ -3,16 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Investor Console MVP</title>
+    <title>DeveloperTI - MVP Critique Console</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <main class="console-shell">
-      <section class="gameboy" aria-label="Investor style feasibility console">
+      <section class="gameboy" aria-label="Product mentor MVP critique console">
         <header class="console-header">
           <div>
-            <p class="eyebrow">NUWA INVESTOR SKILL MVP</p>
-            <h1>被赶出办公室当天，我反手掏出项目计划从夯到拉榜单</h1>
+            <p class="eyebrow">DEVELOPERTI 产品导师 MVP</p>
+            <h1>你的 MVP 不是不能做，是还没被产品导师毒打一遍</h1>
             <p class="header-subtitle">项目锐评报告生成器</p>
           </div>
         </header>
@@ -21,9 +21,9 @@
           <div class="scanlines" aria-hidden="true"></div>
           <section class="hero-panel">
             <div>
-              <p class="terminal-label">INSERT PLAN / SELECT MIND / PRESS START</p>
-              <h2>上传你的项目计划书，获得大牛锐评以及你的 developer 人格画像。</h2>
-              <p class="speech-burst">Experience the magic of 8-bit feasibility.</p>
+              <p class="terminal-label">输入计划 / 选择导师 / 开始锐评</p>
+              <h2>输入 idea 或 MVP 文档，获得产品导师锐评、范围裁剪和下一轮迭代计划。</h2>
+              <p class="speech-burst">Experience the magic of 8-bit product critique.</p>
             </div>
             <div class="poster-mascot" aria-hidden="true">
               <span class="mascot-console">
@@ -43,108 +43,129 @@
                 <span class="speaker-line three"></span>
               </span>
             </div>
-            <div class="rank-strip" aria-label="Rating scale">
+            <div class="rank-strip" aria-label="Hype ranking scale">
               <span>夯</span>
               <span>顶级</span>
               <span>人上人</span>
-              <span>npc</span>
+              <span class="rank-npc">NPC</span>
               <span>拉完了</span>
             </div>
           </section>
 
           <section class="investor-deck" aria-labelledby="investorHeading">
-            <div class="deck-title" id="investorHeading">SELECT CHARACTER</div>
+            <div class="deck-title" id="investorHeading">选择产品导师</div>
             <div id="investorGrid" class="investor-grid"></div>
           </section>
 
           <section class="layout-grid">
             <aside class="control-deck">
-              <div class="deck-title">PLAYER PROFILE</div>
+              <div class="deck-title">项目上下文</div>
 
               <label class="file-slot" for="planFile">
                 <input id="planFile" type="file" accept=".txt,.md,.csv,.json,.pdf,.doc,.docx" multiple />
                 <span class="slot-icon" aria-hidden="true"></span>
-                <strong>UPLOAD PLAN(S)</strong>
-                <small>支持多项目上传。TXT/MD 最佳，PDF/DOCX MVP 阶段按浏览器可读取文本尝试。</small>
+                <strong>上传 MVP 文档</strong>
+                <small>支持 idea、MVP 描述或项目材料。TXT/MD 最佳，PDF/DOCX MVP 阶段按浏览器可读取文本尝试。</small>
               </label>
               <div id="projectStack" class="project-stack" aria-live="polite"></div>
 
-              <label class="field-label" for="planText">项目计划书内容</label>
-              <textarea id="planText" spellcheck="false" placeholder="粘贴单个 business plan，或用 ---PROJECT--- 分隔多个项目..."></textarea>
+              <label class="field-label" for="planText">产品 idea / MVP 文档</label>
+              <textarea id="planText" spellcheck="false" placeholder="粘贴一句产品创意、MVP brief，或用 ---PROJECT--- 分隔多个项目..."></textarea>
 
               <div class="form-grid">
                 <label>
                   身份
                   <select id="identity">
-                    <option value="student">Student</option>
-                    <option value="founder">Founder</option>
-                    <option value="employee">Employee</option>
-                    <option value="creator">Creator</option>
-                    <option value="small_business_owner">Small Business Owner</option>
+                    <option value="student">学生</option>
+                    <option value="founder">创业者</option>
+                    <option value="employee">职场人</option>
+                    <option value="creator">创作者</option>
+                    <option value="indie_developer">独立开发者</option>
                   </select>
                 </label>
 
                 <label>
                   阶段
                   <select id="stage">
-                    <option value="idea">Idea</option>
-                    <option value="prototype">Prototype</option>
-                    <option value="launched">Launched</option>
+                    <option value="idea">想法阶段</option>
+                    <option value="prototype">原型阶段</option>
+                    <option value="launched">已上线</option>
                   </select>
                 </label>
 
                 <label>
                   目的
                   <select id="goal">
-                    <option value="competition">Competition</option>
-                    <option value="fundraising">Fundraising</option>
-                    <option value="coursework">Coursework</option>
-                    <option value="startup_validation">Startup Validation</option>
-                    <option value="social_media">Social Media</option>
+                    <option value="hackathon">黑客松</option>
+                    <option value="product_demo">产品演示</option>
+                    <option value="startup_validation">创业验证</option>
+                    <option value="coursework">课程作业</option>
+                    <option value="social_media">社媒传播</option>
                   </select>
                 </label>
 
                 <label>
-                  风险偏好
-                  <select id="riskPreference">
-                    <option value="balanced">Balanced</option>
-                    <option value="conservative">Conservative</option>
-                    <option value="aggressive">Aggressive</option>
+                  平台
+                  <select id="targetPlatform">
+                    <option value="web">网页端</option>
+                    <option value="mobile_web">移动网页</option>
+                    <option value="douyin_interactive_space">抖音互动空间</option>
+                    <option value="desktop">桌面端</option>
+                    <option value="other">其他</option>
+                  </select>
+                </label>
+
+                <label>
+                  开发时间
+                  <select id="buildTime">
+                    <option value="3_hours">3 小时</option>
+                    <option value="1_day">1 天</option>
+                    <option value="2_days" selected>2 天</option>
+                    <option value="1_week">1 周</option>
+                  </select>
+                </label>
+
+                <label>
+                  技术信心
+                  <select id="technicalConfidence">
+                    <option value="low">偏低</option>
+                    <option value="medium" selected>中等</option>
+                    <option value="high">较高</option>
                   </select>
                 </label>
               </div>
 
               <button id="analyzeBtn" class="start-button" type="button">
-                <span>START</span>
-                RUN ANALYSIS
+                <span>开始</span>
+                生成锐评
               </button>
               <p id="status" class="status-line" role="status">READY</p>
             </aside>
 
             <section class="result-deck" aria-labelledby="reportHeading">
-              <div class="deck-title" id="reportHeading">RESULT SCREEN</div>
+              <div class="deck-title" id="reportHeading">锐评报告</div>
               <div id="loadingPanel" class="loading-panel hidden" aria-hidden="true">
                 <div class="pixel-loader">
                   <span></span>
                 </div>
-                <p id="loadingText">PARSING PLAN...</p>
+                <p id="loadingText">正在解析项目...</p>
               </div>
 
               <article id="report" class="report empty">
-                <p class="blink">等待输入。选择投资人，上传或粘贴计划书，然后按 START。</p>
-                <p>输出包含 rating、六维度评分、persona-style verdict、关键风险和分享卡片。</p>
+                <p class="blink">等待输入。选择产品导师，上传或粘贴 MVP brief，然后按开始。</p>
+                <p>输出包含从夯到拉评级、六维度评分、产品锐评、范围裁剪和项目诊断卡片。</p>
               </article>
 
               <aside id="shareCard" class="share-card hidden" aria-label="Share card preview"></aside>
-              <button id="downloadCardBtn" class="secondary-button hidden" type="button">DOWNLOAD PIXEL CARD</button>
+              <button id="downloadCardBtn" class="secondary-button hidden" type="button">下载像素卡片</button>
             </section>
           </section>
         </div>
 
         <footer class="console-footer">
-          <span>STYLE-INSPIRED ONLY</span>
-          <span>NOT REAL INVESTMENT ADVICE</span>
-          <span>BUILD: MVP-01</span>
+          <span>风格模拟，仅供产品讨论</span>
+          <span>产品导师锐评</span>
+          <span>版本：MVP-01</span>
         </footer>
       </section>
     </main>
