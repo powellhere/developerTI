@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <svg class="svg-defs" aria-hidden="true" focusable="false">
+      <filter id="paper-noise">
+        <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" result="noise" />
+        <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0.08 0 0 0 0 0.07 0 0 0 0 0.05 0 0 0 0.06 0" result="paperNoise" />
+        <feBlend in="SourceGraphic" in2="paperNoise" mode="multiply" />
+      </filter>
+    </svg>
     <main class="console-shell">
       <section class="gameboy" aria-label="Product mentor MVP critique console">
         <header class="console-header">
@@ -20,35 +27,46 @@
         <div class="screen">
           <div class="scanlines" aria-hidden="true"></div>
           <section class="hero-panel">
-            <div>
-              <p class="terminal-label">输入计划 / 选择导师 / 开始锐评</p>
-              <h2>输入 idea 或 MVP 文档，获得产品导师锐评、范围裁剪和下一轮迭代计划。</h2>
-              <p class="speech-burst">Experience the magic of 8-bit product critique.</p>
-            </div>
-            <div class="poster-mascot" aria-hidden="true">
-              <span class="mascot-console">
-                <span class="console-shine"></span>
-                <span class="mascot-screen">
-                  <span class="face-eye left"></span>
-                  <span class="face-eye right"></span>
-                  <span class="face-smile"></span>
+            <div class="arcade-cabinet">
+              <div class="arcade-marquee" aria-hidden="true">
+                <span class="marquee-blocks">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
                 </span>
-                <span class="dpad"></span>
-                <span class="button-red"></span>
-                <span class="button-green"></span>
-                <span class="button-blue"></span>
-                <span class="button-yellow"></span>
-                <span class="speaker-line one"></span>
-                <span class="speaker-line two"></span>
-                <span class="speaker-line three"></span>
-              </span>
-            </div>
-            <div class="rank-strip" aria-label="Hype ranking scale">
-              <span>夯</span>
-              <span>顶级</span>
-              <span>人上人</span>
-              <span class="rank-npc">NPC</span>
-              <span>拉完了</span>
+                <strong>DEVELOPERTI</strong>
+                <span class="marquee-blocks">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </span>
+              </div>
+              <div class="arcade-screen">
+                <div class="arcade-copy">
+                  <strong class="game-word">GAME</strong>
+                  <span class="screen-status-bar" aria-hidden="true"></span>
+                  <p class="terminal-label">输入计划 / 选择导师 / 开始锐评</p>
+                  <h2>输入 idea 或 MVP 文档，获得产品导师锐评、范围裁剪和下一轮迭代计划。</h2>
+                  <p class="speech-burst">Experience the magic of 8-bit product critique.</p>
+                </div>
+              </div>
+              <div class="arcade-controls">
+                <div class="rank-strip" aria-label="Hype ranking scale">
+                  <span>夯</span>
+                  <span>顶级</span>
+                  <span>人上人</span>
+                  <span class="rank-npc">NPC</span>
+                  <span>拉完了</span>
+                </div>
+                <span class="arcade-button-bank" aria-hidden="true">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </span>
+              </div>
             </div>
           </section>
 
@@ -72,68 +90,17 @@
               <label class="field-label" for="planText">产品 idea / MVP 文档</label>
               <textarea id="planText" spellcheck="false" placeholder="粘贴一句产品创意、MVP brief，或用 ---PROJECT--- 分隔多个项目..."></textarea>
 
-              <div class="form-grid">
-                <label>
-                  身份
-                  <select id="identity">
-                    <option value="student">学生</option>
-                    <option value="founder">创业者</option>
-                    <option value="employee">职场人</option>
-                    <option value="creator">创作者</option>
-                    <option value="indie_developer">独立开发者</option>
-                  </select>
-                </label>
-
-                <label>
-                  阶段
-                  <select id="stage">
-                    <option value="idea">想法阶段</option>
-                    <option value="prototype">原型阶段</option>
-                    <option value="launched">已上线</option>
-                  </select>
-                </label>
-
-                <label>
-                  目的
-                  <select id="goal">
-                    <option value="hackathon">黑客松</option>
-                    <option value="product_demo">产品演示</option>
-                    <option value="startup_validation">创业验证</option>
-                    <option value="coursework">课程作业</option>
-                    <option value="social_media">社媒传播</option>
-                  </select>
-                </label>
-
-                <label>
-                  平台
-                  <select id="targetPlatform">
-                    <option value="web">网页端</option>
-                    <option value="mobile_web">移动网页</option>
-                    <option value="douyin_interactive_space">抖音互动空间</option>
-                    <option value="desktop">桌面端</option>
-                    <option value="other">其他</option>
-                  </select>
-                </label>
-
-                <label>
-                  开发时间
-                  <select id="buildTime">
-                    <option value="3_hours">3 小时</option>
-                    <option value="1_day">1 天</option>
-                    <option value="2_days" selected>2 天</option>
-                    <option value="1_week">1 周</option>
-                  </select>
-                </label>
-
-                <label>
-                  技术信心
-                  <select id="technicalConfidence">
-                    <option value="low">偏低</option>
-                    <option value="medium" selected>中等</option>
-                    <option value="high">较高</option>
-                  </select>
-                </label>
-              </div>
+              <section class="tolerance-control" aria-labelledby="toleranceLabel">
+                <div class="tolerance-heading">
+                  <strong id="toleranceLabel">导师容忍度</strong>
+                  <span id="toleranceValue">标准模式</span>
+                </div>
+                <input id="tolerance" type="range" min="0" max="100" step="1" value="50" />
+                <div class="tolerance-scale" aria-hidden="true">
+                  <span>地狱模式</span>
+                  <span>温柔模式</span>
+                </div>
+              </section>
 
               <button id="analyzeBtn" class="start-button" type="button">
                 <span>开始</span>
@@ -144,6 +111,14 @@
 
             <section class="result-deck" aria-labelledby="reportHeading">
               <div class="deck-title" id="reportHeading">锐评报告</div>
+              <div class="thermal-printer" aria-hidden="true">
+                <span class="printer-bezel">
+                  <span class="printer-roller left"></span>
+                  <span class="printer-slot"></span>
+                  <span class="printer-roller right"></span>
+                  <span class="printer-light"></span>
+                </span>
+              </div>
               <div id="loadingPanel" class="loading-panel hidden" aria-hidden="true">
                 <div class="pixel-loader">
                   <span></span>

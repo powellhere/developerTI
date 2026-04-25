@@ -2,7 +2,7 @@ const investors = [
   { id: "paul_graham", name: "Paul Graham", domain: "产品 / 用户 / MVP", tag: "先找真实需求" },
   { id: "zhang_yiming", name: "张一鸣", domain: "产品 / 反馈 / 系统", tag: "看反馈闭环" },
   { id: "karpathy", name: "Karpathy", domain: "工程 / Demo / 调试", tag: "先跑通流程" },
-  { id: "ilya", name: "Ilya Sutskever", domain: "研究 / 边界 / 重要性", tag: "先定义边界" },
+  { id: "kris_jenner", name: "Kris Jenner", domain: "品牌 / IP / 传播控制", tag: "Momager mode" },
   { id: "mrbeast", name: "MrBeast", domain: "钩子 / 留存 / 传播", tag: "三秒抓住人" },
   { id: "trump", name: "特朗普", domain: "包装 / 展示 / 注意力", tag: "主张要够强" },
   { id: "jobs", name: "乔布斯", domain: "聚焦 / 审美 / 体验", tag: "删到足够锋利" },
@@ -21,19 +21,14 @@ const loadingPanel = document.querySelector("#loadingPanel");
 const loadingText = document.querySelector("#loadingText");
 const downloadCardBtn = document.querySelector("#downloadCardBtn");
 const projectStack = document.querySelector("#projectStack");
-
-const profileInputs = {
-  identity: document.querySelector("#identity"),
-  stage: document.querySelector("#stage"),
-  goal: document.querySelector("#goal"),
-  targetPlatform: document.querySelector("#targetPlatform"),
-  buildTime: document.querySelector("#buildTime"),
-  technicalConfidence: document.querySelector("#technicalConfidence")
-};
+const resultDeck = document.querySelector(".result-deck");
+const toleranceInput = document.querySelector("#tolerance");
+const toleranceValue = document.querySelector("#toleranceValue");
 
 let selectedInvestor = "paul_graham";
 let latestShareCard = null;
 let uploadedProjects = [];
+let printTimer = null;
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -55,9 +50,21 @@ function setLoading(isLoading, text = "正在解析项目...") {
 }
 
 function getUserProfile() {
-  return Object.fromEntries(
-    Object.entries(profileInputs).map(([key, input]) => [key, input.value])
-  );
+  return { tolerance: Number(toleranceInput.value) };
+}
+
+function toleranceLabel(value) {
+  const score = Number(value);
+  if (score <= 20) return "地狱模式";
+  if (score <= 45) return "严格模式";
+  if (score >= 80) return "温柔模式";
+  if (score >= 60) return "鼓励模式";
+  return "标准模式";
+}
+
+function updateToleranceLabel() {
+  toleranceValue.textContent = toleranceLabel(toleranceInput.value);
+  toleranceInput.style.setProperty("--tolerance", `${toleranceInput.value}%`);
 }
 
 function renderProjectStack() {
@@ -121,62 +128,62 @@ function renderInvestors() {
 }
 
 function scoreColor(score) {
-  if (score >= 90) return "var(--rank-hot)";
-  if (score >= 75) return "var(--rank-good)";
-  if (score >= 60) return "var(--rank-mid)";
-  if (score >= 40) return "var(--rank-low)";
+  if (score >= 88) return "var(--rank-hot)";
+  if (score >= 76) return "var(--rank-good)";
+  if (score >= 62) return "var(--rank-mid)";
+  if (score >= 45) return "var(--rank-low)";
   return "var(--rank-bad)";
 }
 
 const dimensionMeta = {
-  interactionClarity: {
-    title: "交互清晰度",
-    focus: "用户是否一眼知道怎么玩、点哪里、会得到什么。",
-    high: "入口和 core loop 已经比较明确。",
-    low: "首屏承诺、操作路径或结果预期还不够清楚。",
-    action: "把 first screen 改成一个输入框、一个导师选择和一个明确结果承诺。"
+  logicalCoherence: {
+    title: "逻辑自洽度",
+    focus: "产品承诺、目标用户、功能实现和不做事项是否互相咬合。",
+    high: "逻辑链条较完整，文档不是只堆功能。",
+    low: "承诺、用户和实现之间仍有断点。",
+    action: "补一段产品承诺与 must-have / cut list 的对应关系。"
   },
   mvpScope: {
-    title: "MVP 范围",
+    title: "MVP 范围控制",
     focus: "第一版是否足够小，是否能在时间约束内完成。",
     high: "范围有收敛，适合先做 first playable。",
     low: "功能集合偏大，容易变成半成品平台。",
     action: "删除 nice-to-have，只保留一个 core loop 和一个结果页。"
   },
   demoFeasibility: {
-    title: "Demo 可实现性",
+    title: "Demo 可跑通性",
     focus: "是否能做出可展示、可体验、可复现的 demo。",
     high: "demo 路径比较可控，适合进入实现。",
     low: "工程路径和展示脚本仍有断点。",
     action: "先写 30-60 秒 demo script，再倒推必须跑通的功能。"
   },
-  userValue: {
-    title: "用户价值",
-    focus: "用户体验后是否获得明确价值，而不是只看到一个功能。",
-    high: "价值承诺基本成立，但仍需真实用户验证。",
+  userPain: {
+    title: "用户痛点强度",
+    focus: "是否有具体 first user、具体场景和具体痛点。",
+    high: "痛点描述有对象、有场景、有立即收益。",
     low: "目标用户和收益还偏泛，需要压到具体场景。",
-    action: "定义一个 first user，并写清楚他完成任务后获得什么。"
+    action: "定义一个 first user，并写清楚他为什么现在就需要这个结果。"
   },
-  visualHook: {
-    title: "视觉钩子",
-    focus: "是否有足够强的第一眼吸引力和结果呈现。",
-    high: "视觉记忆点较强，适合展示或截图。",
-    low: "结果页不够抓人，用户看完不一定记得住。",
-    action: "优先做一个可截图的诊断卡片或状态徽章。"
+  vibeIdentity: {
+    title: "Vibe 体验辨识度",
+    focus: "项目是否有明确情绪钩子、体验性格和结果记忆点。",
+    high: "体验辨识度较强，用户容易记住。",
+    low: "项目看起来像普通工具，情绪价值不够明显。",
+    action: "强化一个可感知的结果状态或情绪化反馈。"
   },
-  sharePotential: {
-    title: "传播潜力",
-    focus: "是否有被转发、讨论或二次体验的动机。",
+  shareReuse: {
+    title: "传播与复用性",
+    focus: "是否有被转发、截图、复用或二次体验的动机。",
     high: "具备传播入口，可以围绕结果卡继续强化。",
-    low: "缺少用户主动分享的理由。",
+    low: "缺少用户主动分享或复用的理由。",
     action: "给结果增加可比较、可晒、可复玩的机制。"
   }
 };
 
 function scoreBand(score) {
   if (score >= 80) return "强";
-  if (score >= 60) return "可用";
-  if (score >= 40) return "偏弱";
+  if (score >= 62) return "可用";
+  if (score >= 45) return "偏弱";
   return "缺失";
 }
 
@@ -252,69 +259,86 @@ function renderReport(payload) {
     scopeCutSuggestions: ["暂缓登录、历史记录、多轮问答和复杂看板，先保证 critique report 可用。"]
   };
   latestShareCard = card;
+  const printDuration = Math.min(2.5, Math.max(1.8, 1.8 + JSON.stringify(payload).length / 9000));
 
-  report.classList.remove("empty");
+  report.classList.remove("empty", "receipt-printing");
+  report.style.setProperty("--print-duration", `${printDuration.toFixed(2)}s`);
+  resultDeck.classList.remove("printer-active", "printer-printing");
+  void resultDeck.offsetWidth;
+  resultDeck.classList.add("printer-printing");
+  window.clearTimeout(printTimer);
+  printTimer = window.setTimeout(() => {
+    resultDeck.classList.remove("printer-printing");
+  }, Math.round(printDuration * 1000 + 520));
+  void report.offsetWidth;
+  report.classList.add("receipt-printing");
   report.innerHTML = `
-    <header class="report-header">
-      <div>
-        <p class="terminal-label">MVP 锐评报告</p>
-        <h2>${escapeHtml(reportData.projectName)}</h2>
+    <div class="receipt-paper">
+      <div class="receipt-meta">
+        <span>DEVTI-PRINTER</span>
+        <span>PRINTING REPORT...</span>
       </div>
-      <div class="grade-badge" style="--badge-color:${scoreColor(reportData.overallScore)}">
-        <span>${escapeHtml(reportData.hypeRank)}</span>
-        <strong>${reportData.overallScore}</strong>
-      </div>
-    </header>
+      <header class="report-header">
+        <div>
+          <p class="terminal-label">MVP 锐评报告</p>
+          <h2>${escapeHtml(reportData.projectName)}</h2>
+        </div>
+        <div class="grade-badge" style="--badge-color:${scoreColor(reportData.overallScore)}">
+          <span>${escapeHtml(reportData.hypeRank)}</span>
+          <strong>${reportData.overallScore}</strong>
+        </div>
+      </header>
 
-    <section class="verdict-box">
-      <h3>${escapeHtml(reportData.mentorName)} 锐评</h3>
-      <p>${escapeHtml(reportData.oneLineVerdict)}</p>
-      <p><strong>MVP 准备度:</strong> ${escapeHtml(reportData.status)}</p>
-      <p>${escapeHtml(reportData.styleComment)}</p>
-    </section>
+      <section class="verdict-box">
+        <h3>${escapeHtml(reportData.mentorName)} 锐评</h3>
+        <p>${escapeHtml(reportData.oneLineVerdict)}</p>
+        <p><strong>MVP 准备度:</strong> ${escapeHtml(reportData.status)}</p>
+        <p>${escapeHtml(reportData.styleComment)}</p>
+      </section>
 
-    <section class="verdict-box">
-      <h3>产品诊断</h3>
-      <p><strong>一句话定位:</strong> ${escapeHtml(critique.currentProductOneLiner)}</p>
-      <p><strong>整体判断:</strong> ${escapeHtml(critique.overallDiagnosis)}</p>
-      <p><strong>核心问题:</strong> ${escapeHtml(critique.topCritique)}</p>
-    </section>
+      <section class="verdict-box">
+        <h3>产品诊断</h3>
+        <p><strong>一句话定位:</strong> ${escapeHtml(critique.currentProductOneLiner)}</p>
+        <p><strong>整体判断:</strong> ${escapeHtml(critique.overallDiagnosis)}</p>
+        <p><strong>核心问题:</strong> ${escapeHtml(critique.topCritique)}</p>
+      </section>
 
-    ${renderRanking(ranking)}
+      ${renderRanking(ranking)}
 
-    <section class="dimension-list">
-      <h3>六维度打分细节</h3>
-      ${renderDimensionRows(reportData.dimensionScores)}
-    </section>
+      <section class="dimension-list">
+        <h3>六维度打分细节</h3>
+        ${renderDimensionRows(reportData.dimensionScores)}
+      </section>
 
-    <section class="two-column-report">
-      <div>
-        <h3>核心锐评</h3>
-        <ul>
-          <li>${escapeHtml(critique.targetUserDiagnosis)}</li>
-          <li>${escapeHtml(critique.problemDiagnosis)}</li>
-          <li>${escapeHtml(critique.coreFlowCritique)}</li>
-          <li>${escapeHtml(critique.firstPlayableAssessment)}</li>
-        </ul>
-      </div>
-      <div>
-        <h3>Scope 裁剪</h3>
-        <ul>${critique.scopeCutSuggestions.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-      </div>
-    </section>
+      <section class="two-column-report">
+        <div>
+          <h3>核心锐评</h3>
+          <ul>
+            <li>${escapeHtml(critique.targetUserDiagnosis)}</li>
+            <li>${escapeHtml(critique.problemDiagnosis)}</li>
+            <li>${escapeHtml(critique.coreFlowCritique)}</li>
+            <li>${escapeHtml(critique.firstPlayableAssessment)}</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Scope 裁剪</h3>
+          <ul>${critique.scopeCutSuggestions.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        </div>
+      </section>
 
-    <section class="two-column-report">
-      <div>
-        <h3>产品风险</h3>
-        <ul>${reportData.keyRisks.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-      </div>
-      <div>
-        <h3>下一轮迭代计划</h3>
-        <ol>${reportData.nextActions.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>
-      </div>
-    </section>
+      <section class="two-column-report">
+        <div>
+          <h3>产品风险</h3>
+          <ul>${reportData.keyRisks.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        </div>
+        <div>
+          <h3>下一轮迭代计划</h3>
+          <ol>${reportData.nextActions.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>
+        </div>
+      </section>
 
-    <p class="disclaimer">该结果是 style-inspired product critique，不代表相关人物本人观点，也不是投资建议。</p>
+      <p class="disclaimer">该结果是 style-inspired product critique，不代表相关人物本人观点，也不是投资建议。</p>
+    </div>
   `;
 
   shareCard.classList.remove("hidden");
@@ -340,7 +364,8 @@ function renderReport(payload) {
 }
 
 function renderError(message) {
-  report.classList.remove("empty");
+  report.classList.remove("empty", "receipt-printing");
+  resultDeck.classList.remove("printer-active", "printer-printing");
   report.innerHTML = `
     <section class="verdict-box error">
       <h2>分析失败</h2>
@@ -358,8 +383,11 @@ async function analyze() {
   }
 
   setStatus("分析中...");
-  setLoading(true, "正在生成产品锐评...");
+  setLoading(true, "热敏打印机预热中...");
   analyzeBtn.disabled = true;
+  resultDeck.classList.remove("printer-printing");
+  resultDeck.classList.add("printer-active");
+  report.classList.remove("receipt-printing");
   shareCard.classList.add("hidden");
   downloadCardBtn.classList.add("hidden");
 
@@ -494,6 +522,8 @@ planText.addEventListener("input", () => {
   renderProjectStack();
 });
 
+toleranceInput.addEventListener("input", updateToleranceLabel);
 analyzeBtn.addEventListener("click", analyze);
 downloadCardBtn.addEventListener("click", downloadCard);
 renderInvestors();
+updateToleranceLabel();
