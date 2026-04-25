@@ -5,69 +5,125 @@ const path = require("path");
 const PORT = process.env.PORT || 4173;
 const PUBLIC_DIR = path.join(__dirname, "public");
 
-const investors = {
-  trump: {
-    name: "Donald Trump",
-    thesis: "品牌势能、媒体注意力、交易杠杆",
-    lens: "会先问这个项目能不能被一句强势口号卖出去，其次才看执行细节。",
-    weights: { market: 1.2, defensibility: 0.8, finance: 1, execution: 1, mvp: 1 }
-  },
-  musk: {
-    name: "Elon Musk",
-    thesis: "技术第一性原理、极限效率、垂直整合",
-    lens: "会拆掉所有假设，追问技术瓶颈、10x 改进和最快原型路径。",
-    weights: { market: 1, defensibility: 1.25, finance: 0.8, execution: 1.15, mvp: 1.2 }
-  },
-  buffett: {
-    name: "Warren Buffett",
-    thesis: "现金流、护城河、长期可理解性",
-    lens: "会避开叙事泡沫，集中看 unit economics、客户粘性和长期利润质量。",
-    weights: { market: 1.05, defensibility: 1.3, finance: 1.25, execution: 0.9, mvp: 0.85 }
-  },
-  cuban: {
-    name: "Mark Cuban",
-    thesis: "销售速度、运营执行、明确客户痛点",
-    lens: "会快速判断你是否真的懂客户，以及本周能不能卖出第一个版本。",
-    weights: { market: 1.15, defensibility: 0.9, finance: 1, execution: 1.25, mvp: 1.15 }
-  },
-  wood: {
-    name: "Cathie Wood",
-    thesis: "disruptive innovation、规模曲线、未来市场",
-    lens: "会偏好大趋势和指数级增长，但会追问采用曲线是否被证据支持。",
-    weights: { market: 1.25, defensibility: 1.05, finance: 0.85, execution: 0.95, mvp: 1.05 }
-  },
-  thiel: {
-    name: "Peter Thiel",
-    thesis: "垄断、秘密、从 0 到 1",
-    lens: "会问你知道什么别人不知道，以及为什么这个市场最后只会剩少数赢家。",
-    weights: { market: 0.95, defensibility: 1.45, finance: 0.9, execution: 1, mvp: 0.95 }
-  },
-  son: {
-    name: "Masayoshi Son",
-    thesis: "超大 TAM、平台化、资本加速",
-    lens: "会寻找能被资本迅速放大的网络效应，但也会惩罚含糊的规模假设。",
-    weights: { market: 1.45, defensibility: 1.05, finance: 0.8, execution: 0.9, mvp: 0.95 }
-  },
-  dalio: {
-    name: "Ray Dalio",
-    thesis: "系统性风险、因果链、压力测试",
-    lens: "会把计划当作一套经济机器，检查变量、反馈环和下行情境。",
-    weights: { market: 1, defensibility: 1, finance: 1.2, execution: 1.1, mvp: 0.9 }
-  },
-  chamath: {
-    name: "Chamath Palihapitiya",
-    thesis: "叙事资本、用户增长、市场窗口",
-    lens: "会看故事能否吸引资本和用户，但会挑战留存与真实价值创造。",
-    weights: { market: 1.25, defensibility: 0.9, finance: 0.9, execution: 1.05, mvp: 1.15 }
-  }
+const dimensions = [
+  "marketSize",
+  "painPoint",
+  "businessModel",
+  "competitiveAdvantage",
+  "executionFeasibility",
+  "viralityNarrative"
+];
+
+const dimensionLabels = {
+  marketSize: "Market Size",
+  painPoint: "Pain Point",
+  businessModel: "Business Model",
+  competitiveAdvantage: "Competitive Advantage",
+  executionFeasibility: "Execution Feasibility",
+  viralityNarrative: "Virality / Narrative"
 };
 
 const signals = {
-  market: ["market", "tam", "sam", "som", "市场", "用户", "客户", "痛点", "需求", "赛道", "增长", "规模"],
-  defensibility: ["moat", "ip", "patent", "data", "network effect", "护城河", "专利", "数据", "壁垒", "网络效应", "算法"],
-  finance: ["revenue", "gross margin", "ltv", "cac", "pricing", "现金流", "收入", "毛利", "成本", "定价", "回本"],
-  execution: ["team", "roadmap", "go-to-market", "sales", "团队", "路线图", "渠道", "销售", "运营", "里程碑"],
-  mvp: ["mvp", "prototype", "pilot", "experiment", "原型", "试点", "验证", "实验", "访谈", "demo"]
+  marketSize: ["market", "tam", "sam", "som", "segment", "市场", "赛道", "用户", "客户", "规模", "增长", "需求"],
+  painPoint: ["pain", "problem", "urgent", "痛点", "问题", "需求", "效率", "成本", "麻烦", "刚需", "替代方案"],
+  businessModel: ["revenue", "pricing", "gross margin", "ltv", "cac", "subscription", "收入", "定价", "付费", "毛利", "成本", "现金流", "商业模式"],
+  competitiveAdvantage: ["moat", "data", "network effect", "patent", "brand", "ip", "护城河", "壁垒", "数据", "算法", "专利", "品牌", "网络效应"],
+  executionFeasibility: ["team", "roadmap", "milestone", "operation", "sales", "团队", "路线图", "里程碑", "渠道", "销售", "运营", "资源"],
+  viralityNarrative: ["viral", "story", "community", "share", "creator", "传播", "故事", "社群", "内容", "分享", "裂变", "叙事"]
+};
+
+const investors = {
+  paul_graham: {
+    name: "Paul Graham",
+    thesis: "Make something people want, then learn faster than the market.",
+    style: "短句、直接、偏创业本质，会优先追问用户是否真的想要。",
+    weights: { marketSize: 0.16, painPoint: 0.25, businessModel: 0.14, competitiveAdvantage: 0.13, executionFeasibility: 0.16, viralityNarrative: 0.16 },
+    bias: { painPoint: 8, executionFeasibility: 4, viralityNarrative: 3 },
+    opener: "The question is not whether this sounds like a startup. The question is whether anyone badly wants it."
+  },
+  zhang_yiming: {
+    name: "张一鸣",
+    thesis: "从底层变量和长期 context 判断，而不是被表层热闹牵引。",
+    style: "冷静、系统、概率化，强调同理心、延迟满足和先小验证。",
+    weights: { marketSize: 0.18, painPoint: 0.2, businessModel: 0.14, competitiveAdvantage: 0.17, executionFeasibility: 0.19, viralityNarrative: 0.12 },
+    bias: { painPoint: 5, competitiveAdvantage: 5, executionFeasibility: 6 },
+    opener: "先把表层概念拿掉，看底层问题是否真实、长期、可验证。"
+  },
+  karpathy: {
+    name: "Karpathy",
+    thesis: "Build to understand; reliability matters after the demo works.",
+    style: "工程化、口语化，会区分探索原型和可部署系统。",
+    weights: { marketSize: 0.13, painPoint: 0.16, businessModel: 0.1, competitiveAdvantage: 0.18, executionFeasibility: 0.25, viralityNarrative: 0.18 },
+    bias: { competitiveAdvantage: 5, executionFeasibility: 8, viralityNarrative: 3 },
+    opener: "imo, this is promising only if you can build the smallest version and inspect where it breaks."
+  },
+  ilya: {
+    name: "Ilya Sutskever",
+    thesis: "Research taste, compression, safety, and depth over noisy speed.",
+    style: "克制、审慎、重视研究品味和能力边界，不轻易给绝对判断。",
+    weights: { marketSize: 0.13, painPoint: 0.14, businessModel: 0.09, competitiveAdvantage: 0.25, executionFeasibility: 0.18, viralityNarrative: 0.21 },
+    bias: { competitiveAdvantage: 8, executionFeasibility: 3, viralityNarrative: 4 },
+    opener: "It may be important. But importance is not the same as being ready."
+  },
+  mrbeast: {
+    name: "MrBeast",
+    thesis: "Simple concept, extreme execution, strong hook, measurable retention.",
+    style: "强传播导向，关注一句话吸引力、视觉反差、复投飞轮。",
+    weights: { marketSize: 0.14, painPoint: 0.13, businessModel: 0.14, competitiveAdvantage: 0.11, executionFeasibility: 0.15, viralityNarrative: 0.33 },
+    bias: { viralityNarrative: 12, marketSize: 3 },
+    opener: "If people cannot understand why this is exciting in one sentence, the idea is not ready."
+  },
+  trump: {
+    name: "特朗普",
+    thesis: "Deal, leverage, attention, winner narrative.",
+    style: "高判断感、强对比、交易视角，关注注意力和谈判筹码。",
+    weights: { marketSize: 0.22, painPoint: 0.13, businessModel: 0.22, competitiveAdvantage: 0.14, executionFeasibility: 0.12, viralityNarrative: 0.17 },
+    bias: { marketSize: 6, businessModel: 6, viralityNarrative: 6 },
+    opener: "This either looks like a strong deal or it does not. Right now the leverage is the whole game."
+  },
+  jobs: {
+    name: "乔布斯",
+    thesis: "Focus, taste, end-to-end product clarity.",
+    style: "产品审美极强，二元判断明显，重视一句话定义和端到端体验。",
+    weights: { marketSize: 0.14, painPoint: 0.18, businessModel: 0.1, competitiveAdvantage: 0.2, executionFeasibility: 0.16, viralityNarrative: 0.22 },
+    bias: { painPoint: 4, competitiveAdvantage: 7, viralityNarrative: 6 },
+    opener: "The product needs one sharp reason to exist. If it has five reasons, it has none."
+  },
+  musk: {
+    name: "马斯克",
+    thesis: "First principles, asymptotic limits, delete and ship.",
+    style: "工程化、挑衅、速度优先，会质疑需求并要求快速制造。",
+    weights: { marketSize: 0.22, painPoint: 0.13, businessModel: 0.09, competitiveAdvantage: 0.22, executionFeasibility: 0.2, viralityNarrative: 0.14 },
+    bias: { marketSize: 6, competitiveAdvantage: 8, executionFeasibility: 6 },
+    opener: "Wrong question. The first question is: what assumption can we delete?"
+  }
+};
+
+const profileAdjustments = {
+  identity: {
+    student: { executionFeasibility: -0.03, viralityNarrative: 0.03 },
+    founder: { businessModel: 0.03, executionFeasibility: 0.03, viralityNarrative: -0.02 },
+    employee: { executionFeasibility: 0.04, marketSize: -0.01 },
+    creator: { viralityNarrative: 0.05, painPoint: 0.02, businessModel: -0.02 },
+    small_business_owner: { businessModel: 0.05, executionFeasibility: 0.02, viralityNarrative: -0.02 }
+  },
+  stage: {
+    idea: { painPoint: 0.03, viralityNarrative: 0.03, executionFeasibility: -0.04 },
+    prototype: { executionFeasibility: 0.02, painPoint: 0.02 },
+    launched: { businessModel: 0.05, executionFeasibility: 0.04, viralityNarrative: -0.03 }
+  },
+  goal: {
+    fundraising: { marketSize: 0.05, competitiveAdvantage: 0.04, businessModel: 0.02 },
+    coursework: { executionFeasibility: 0.03, painPoint: 0.02 },
+    competition: { viralityNarrative: 0.05, competitiveAdvantage: 0.02 },
+    startup_validation: { painPoint: 0.05, businessModel: 0.03 },
+    social_media: { viralityNarrative: 0.08, businessModel: -0.02 }
+  },
+  riskPreference: {
+    conservative: { executionFeasibility: 0.05, businessModel: 0.04, marketSize: -0.02 },
+    balanced: {},
+    aggressive: { marketSize: 0.04, competitiveAdvantage: 0.03, viralityNarrative: 0.04, executionFeasibility: -0.02 }
+  }
 };
 
 const mimeTypes = {
@@ -75,7 +131,8 @@ const mimeTypes = {
   ".css": "text/css; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
-  ".svg": "image/svg+xml"
+  ".svg": "image/svg+xml",
+  ".png": "image/png"
 };
 
 function sendJson(res, status, body) {
@@ -88,7 +145,7 @@ function getRequestBody(req) {
     let body = "";
     req.on("data", (chunk) => {
       body += chunk;
-      if (body.length > 1_500_000) {
+      if (body.length > 2_500_000) {
         reject(new Error("Plan text is too large for this MVP."));
         req.destroy();
       }
@@ -98,99 +155,208 @@ function getRequestBody(req) {
   });
 }
 
-function scoreDimension(text, dimension, weight) {
+function normalizeWeights(baseWeights, userProfile = {}) {
+  const adjusted = { ...baseWeights };
+
+  Object.entries(profileAdjustments).forEach(([group, options]) => {
+    const selected = userProfile[group];
+    const rules = options[selected] || {};
+    Object.entries(rules).forEach(([dimension, delta]) => {
+      adjusted[dimension] = Math.max(0.05, (adjusted[dimension] || 0) + delta);
+    });
+  });
+
+  const total = dimensions.reduce((sum, dimension) => sum + adjusted[dimension], 0);
+  return Object.fromEntries(dimensions.map((dimension) => [dimension, adjusted[dimension] / total]));
+}
+
+function countHits(text, keywords) {
   const lower = text.toLowerCase();
-  const hits = signals[dimension].reduce((count, keyword) => {
-    return count + (lower.includes(keyword.toLowerCase()) ? 1 : 0);
+  return keywords.reduce((count, keyword) => {
+    const pattern = keyword.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const matches = lower.match(new RegExp(pattern, "g"));
+    return count + (matches ? matches.length : 0);
   }, 0);
-  const densityBonus = Math.min(20, Math.floor(text.length / 1400));
-  return Math.max(18, Math.min(95, Math.round((28 + hits * 11 + densityBonus) * weight)));
 }
 
-function sentenceForScore(label, score) {
-  if (score >= 78) return `${label} 已经有较清晰证据，但仍需要用真实客户数据验证。`;
-  if (score >= 55) return `${label} 有基本轮廓，不过关键假设仍偏叙述化。`;
-  return `${label} 证据不足，当前更像 idea statement，而不是可投资计划。`;
+function scoreDimension(text, dimension, investor) {
+  const hits = countHits(text, signals[dimension]);
+  const lengthBonus = Math.min(14, Math.floor(text.length / 1800));
+  const structureBonus = /#+\s|目标|问题|方案|商业模式|竞品|风险|roadmap|milestone/i.test(text) ? 6 : 0;
+  const personaBonus = investor.bias[dimension] || 0;
+  return Math.max(18, Math.min(96, Math.round(34 + hits * 7 + lengthBonus + structureBonus + personaBonus)));
 }
 
-function buildMvpLogic(text) {
-  const hasCustomer = /客户|用户|interview|访谈|pain|痛点/i.test(text);
-  const hasRevenue = /收入|定价|pricing|revenue|付费|订单/i.test(text);
-  const hasTech = /算法|模型|平台|api|app|软件|hardware|ai|数据/i.test(text);
+function ratingForScore(score) {
+  if (score >= 90) return "夯";
+  if (score >= 75) return "顶级";
+  if (score >= 60) return "人上人";
+  if (score >= 40) return "npc";
+  return "拉完了";
+}
 
-  const firstUser = hasCustomer ? "锁定一个最窄 customer segment，访谈 10-15 个高痛点用户。" : "先定义一个最窄 customer segment，不要从泛市场开始。";
-  const proof = hasRevenue ? "用 landing page + 预售/付费意向收集验证 willingness to pay。" : "用 concierge MVP 手动交付一次核心价值，再测试是否有人愿意付费。";
-  const build = hasTech ? "只开发一个核心 workflow：上传输入、生成结果、人工校验、导出结论。" : "先不用完整产品，使用表单、人工服务和结果模板完成闭环。";
+function commentForDimension(dimension, score) {
+  const label = dimensionLabels[dimension];
+  if (score >= 80) return `${label} 证据较强，已经能支撑下一轮 validation。`;
+  if (score >= 60) return `${label} 有基本轮廓，但还需要更具体的数据或实验。`;
+  if (score >= 40) return `${label} 偏概念化，当前证据不足以支撑强判断。`;
+  return `${label} 明显缺失，需要优先补充，否则会拖低整体评级。`;
+}
+
+function extractProjectName(project, index) {
+  const text = project.text || "";
+  const heading = text.match(/^\s*#\s+(.+)$/m);
+  if (heading) return heading[1].trim().slice(0, 80);
+  const firstLine = text.split(/\n/).map((line) => line.trim()).find((line) => line.length > 4);
+  return (project.name || firstLine || `Project ${index + 1}`).slice(0, 80);
+}
+
+function buildRisks(scores) {
+  return [...scores]
+    .sort((a, b) => a.score - b.score)
+    .slice(0, 3)
+    .map((item) => {
+      if (item.key === "marketSize") return "Market Risk: 目标市场、early adopter 或购买人定义不够尖锐。";
+      if (item.key === "painPoint") return "Pain Point Risk: 用户痛点强度还没有被访谈、预售或使用数据证明。";
+      if (item.key === "businessModel") return "Business Model Risk: 定价、毛利、CAC 或回本周期仍然模糊。";
+      if (item.key === "competitiveAdvantage") return "Moat Risk: 差异化容易被复制，需要更明确的数据、品牌、技术或渠道壁垒。";
+      if (item.key === "executionFeasibility") return "Execution Risk: milestone、团队分工、资源约束和 go-to-market 路径需要细化。";
+      return "Narrative Risk: 传播钩子不够清晰，用户不一定愿意主动分享。";
+    });
+}
+
+function buildNextActions(scores, userProfile) {
+  const weakest = [...scores].sort((a, b) => a.score - b.score)[0]?.key;
+  const actions = {
+    marketSize: "把目标用户缩到一个最窄 ICP，列出 20 个可触达对象。",
+    painPoint: "做 10 次 problem interview，验证用户是否已经在为该问题付出时间或金钱。",
+    businessModel: "设计一个最小付费测试：预售、订金、waitlist 或手动服务报价。",
+    competitiveAdvantage: "写出 3 个竞品无法快速复制的资产，并说明形成路径。",
+    executionFeasibility: "拆成 2 周 validation sprint，只保留一个核心 workflow。",
+    viralityNarrative: "用一句话重写项目钩子，并测试 5 个标题/卡片版本。"
+  };
 
   return [
-    firstUser,
-    proof,
-    build,
-    "设置 2 周 validation sprint：目标是 5 个有效试用、2 个付费或明确采购承诺。",
-    "若转化低于目标，优先改 ICP 和价值主张，而不是加功能。"
+    actions[weakest] || actions.painPoint,
+    userProfile.goal === "fundraising"
+      ? "补充融资视角材料：TAM、traction、unit economics 和 use of funds。"
+      : "先验证 single riskiest assumption，再决定是否扩功能。",
+    "生成下一版计划书时，把缺失字段写成可测试假设，而不是愿景描述。"
   ];
 }
 
-function analyzePlan(planText, investorKey) {
-  const investor = investors[investorKey] || investors.musk;
-  const text = (planText || "").trim();
-  const dimensions = Object.fromEntries(
-    Object.keys(signals).map((dimension) => [
-      dimension,
-      scoreDimension(text, dimension, investor.weights[dimension] || 1)
-    ])
-  );
-  const overall = Math.round(
-    dimensions.market * 0.24 +
-      dimensions.defensibility * 0.24 +
-      dimensions.finance * 0.2 +
-      dimensions.execution * 0.17 +
-      dimensions.mvp * 0.15
-  );
+function creatorType(report) {
+  const top = [...report.dimensionScores].sort((a, b) => b.score - a.score)[0]?.key;
+  if (top === "viralityNarrative") return "Narrative Founder";
+  if (top === "businessModel") return "Cashflow Realist";
+  if (top === "competitiveAdvantage") return "Moat Builder";
+  if (top === "executionFeasibility") return "Sprint Operator";
+  if (top === "marketSize") return "Moonshot Builder";
+  return "Problem Hunter";
+}
 
-  const weak = Object.entries(dimensions)
-    .sort((a, b) => a[1] - b[1])
-    .slice(0, 2)
-    .map(([key]) => key);
+function analyzeSingleProject(project, index, investor, userProfile) {
+  const text = String(project.text || "").trim();
+  const weights = normalizeWeights(investor.weights, userProfile);
+  const dimensionScores = dimensions.map((dimension) => ({
+    key: dimension,
+    label: dimensionLabels[dimension],
+    score: scoreDimension(text, dimension, investor),
+    weight: Number(weights[dimension].toFixed(3)),
+    comment: commentForDimension(dimension, scoreDimension(text, dimension, investor))
+  }));
 
-  const dimensionLabels = {
-    market: "Market",
-    defensibility: "Defensibility",
-    finance: "Unit economics",
-    execution: "Execution",
-    mvp: "MVP validation"
+  const overallScore = Math.round(
+    dimensionScores.reduce((sum, item) => sum + item.score * weights[item.key], 0)
+  );
+  const rating = ratingForScore(overallScore);
+  const projectName = extractProjectName(project, index);
+  const strongest = [...dimensionScores].sort((a, b) => b.score - a.score)[0];
+  const weakest = [...dimensionScores].sort((a, b) => a.score - b.score)[0];
+
+  return {
+    projectName,
+    personaName: investor.name,
+    personaThesis: investor.thesis,
+    overallScore,
+    rating,
+    oneLineVerdict: `${rating}：${projectName} 的最强点是 ${strongest.label}，最弱点是 ${weakest.label}。`,
+    styleComment: `${investor.opener} ${investor.style}`,
+    dimensionScores,
+    keyRisks: buildRisks(dimensionScores),
+    nextActions: buildNextActions(dimensionScores, userProfile),
+    strongestPoint: strongest.label,
+    weakestPoint: weakest.label
   };
+}
+
+function buildShareCard(report, investor) {
+  return {
+    projectName: report.projectName,
+    investorPersona: investor.name,
+    rating: report.rating,
+    score: report.overallScore,
+    creatorType: creatorType(report),
+    tagline: `${report.rating}项目：${report.strongestPoint}能打，${report.weakestPoint}需要补课。`,
+    topTrait: report.strongestPoint,
+    weakness: report.weakestPoint
+  };
+}
+
+function normalizeProjects(payload) {
+  if (Array.isArray(payload.projects) && payload.projects.length) {
+    return payload.projects.map((project, index) => ({
+      name: String(project.name || `Project ${index + 1}`),
+      text: String(project.text || "")
+    }));
+  }
+
+  const text = String(payload.planText || "");
+  return text
+    .split(/\n\s*---PROJECT---\s*\n/i)
+    .map((chunk, index) => ({ name: `Project ${index + 1}`, text: chunk.trim() }))
+    .filter((project) => project.text);
+}
+
+function analyzeProjects(payload) {
+  const investor = investors[payload.investor] || investors.paul_graham;
+  const userProfile = payload.userProfile || {};
+  const projects = normalizeProjects(payload);
+
+  if (!projects.length) {
+    const error = new Error("请至少上传或粘贴一个项目计划书。");
+    error.status = 400;
+    throw error;
+  }
+
+  const tooShort = projects.find((project) => project.text.trim().length < 120);
+  if (tooShort) {
+    const error = new Error(`项目「${tooShort.name}」内容太短，请至少提供 120 个字符。`);
+    error.status = 400;
+    throw error;
+  }
+
+  const reports = projects.map((project, index) => analyzeSingleProject(project, index, investor, userProfile));
+  const ranking = [...reports]
+    .sort((a, b) => b.overallScore - a.overallScore)
+    .map((report, index) => ({
+      rank: index + 1,
+      projectName: report.projectName,
+      overallScore: report.overallScore,
+      rating: report.rating,
+      oneLineVerdict: report.oneLineVerdict,
+      strongestPoint: report.strongestPoint,
+      weakestPoint: report.weakestPoint
+    }));
+  const topReport = reports.find((report) => report.projectName === ranking[0].projectName) || reports[0];
 
   return {
     investor: investor.name,
-    thesis: investor.thesis,
-    lens: investor.lens,
-    overall,
-    verdict:
-      overall >= 76
-        ? "可进入强验证阶段，但不应直接扩张。"
-        : overall >= 55
-          ? "具备早期探索价值，但投资材料还不足以支撑严肃尽调。"
-          : "当前不适合融资，应该先回到 problem-solution fit。", 
-    scores: dimensions,
-    critique: Object.entries(dimensions).map(([key, score]) => ({
-      title: dimensionLabels[key],
-      score,
-      comment: sentenceForScore(dimensionLabels[key], score)
-    })),
-    redFlags: weak.map((key) => {
-      if (key === "market") return "目标市场和 early adopter 描述不够尖锐，TAM 叙事可能掩盖真实购买人。";
-      if (key === "defensibility") return "护城河证据弱，竞争者复制成本和数据优势需要更具体。";
-      if (key === "finance") return "商业模型缺少 CAC、毛利、回本周期或定价验证，无法判断 unit economics。";
-      if (key === "execution") return "执行路径缺少 milestone、owner 和 go-to-market 细节。";
-      return "MVP 假设没有转化为可测实验，容易变成长期开发而非快速验证。";
-    }),
-    mvpLogic: buildMvpLogic(text),
-    nextQuestions: [
-      "谁是最愿意立刻试用或付费的 20 个具体客户？",
-      "他们现在用什么替代方案，替代成本是多少？",
-      "两周内能验证的 single riskiest assumption 是什么？"
-    ]
+    projectCount: reports.length,
+    report: topReport,
+    reports,
+    ranking,
+    shareCard: buildShareCard(topReport, investor)
   };
 }
 
@@ -227,17 +393,9 @@ const server = http.createServer(async (req, res) => {
     try {
       const body = await getRequestBody(req);
       const payload = JSON.parse(body || "{}");
-      const text = String(payload.planText || "");
-      const investorKey = String(payload.investor || "musk");
-
-      if (text.trim().length < 120) {
-        sendJson(res, 400, { error: "计划书内容太短。请上传或粘贴至少 120 个字符。" });
-        return;
-      }
-
-      sendJson(res, 200, analyzePlan(text, investorKey));
+      sendJson(res, 200, analyzeProjects(payload));
     } catch (error) {
-      sendJson(res, 500, { error: error.message || "Analysis failed." });
+      sendJson(res, error.status || 500, { error: error.message || "Analysis failed." });
     }
     return;
   }
@@ -252,5 +410,5 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Win95 Investor MVP running at http://localhost:${PORT}`);
+  console.log(`Investor Console MVP running at http://localhost:${PORT}`);
 });

@@ -3,84 +3,165 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Investor.exe - Win95 投资人批判分析器</title>
+    <title>Investor Console MVP</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="desktop">
-      <section class="window shell" aria-label="Win95 investor analyzer">
-        <header class="title-bar">
-          <div class="title-left">
-            <span class="app-icon" aria-hidden="true"></span>
-            <span>INVESTOR_CRITIC.EXE</span>
+    <main class="console-shell">
+      <section class="gameboy" aria-label="Investor style feasibility console">
+        <header class="console-header">
+          <div>
+            <p class="eyebrow">NUWA INVESTOR SKILL MVP</p>
+            <h1>被赶出办公室当天，我反手掏出项目计划从夯到拉榜单</h1>
+            <p class="header-subtitle">项目可行性像素评测机</p>
           </div>
-          <div class="window-controls" aria-hidden="true">
-            <span>_</span><span>□</span><span>×</span>
+          <div class="power-light" aria-label="Poster badge">
+            <span>♛</span>
           </div>
         </header>
 
-        <div class="menu-bar">
-          <span>File</span>
-          <span>Investor</span>
-          <span>Report</span>
-          <span>Help</span>
-        </div>
-
-        <div class="workspace">
-          <aside class="panel control-panel">
-            <div class="panel-title">PROJECT PLAN INPUT</div>
-            <label class="file-drop" for="planFile">
-              <input id="planFile" type="file" accept=".txt,.md,.csv,.json,.pdf,.doc,.docx" />
-              <span class="disk-icon" aria-hidden="true"></span>
-              <strong>Upload plan file</strong>
-              <small>TXT/MD 最佳；PDF/DOCX 在 MVP 中按文本尝试读取</small>
-            </label>
-
-            <label class="field-label" for="planText">或直接粘贴计划书内容</label>
-            <textarea id="planText" spellcheck="false" placeholder="Paste your business plan, pitch memo, or project proposal here..."></textarea>
-
-            <button id="analyzeBtn" class="win-button primary" type="button">Run Critical Analysis</button>
-            <div id="status" class="status-line" role="status">STATUS: WAITING_FOR_INPUT</div>
-          </aside>
-
-          <section class="panel investor-panel">
-            <div class="panel-title">SELECT INVESTOR PERSONALITY</div>
-            <div id="investorGrid" class="investor-grid" aria-label="Investor grid"></div>
-          </section>
-
-          <section class="window report-window">
-            <header class="title-bar report-title">
-              <div class="title-left">
-                <span class="doc-icon" aria-hidden="true"></span>
-                <span>CRITICAL_REPORT.TXT</span>
-              </div>
-              <div class="window-controls" aria-hidden="true">
-                <span>_</span><span>□</span><span>×</span>
-              </div>
-            </header>
-            <div id="report" class="report empty">
-              <p class="blink">选择一位投资人，并上传项目计划书。</p>
-              <p>系统会输出 feasibility、critical risks 和 minimum MVP logic。</p>
+        <div class="screen">
+          <div class="scanlines" aria-hidden="true"></div>
+          <section class="hero-panel">
+            <div>
+              <p class="terminal-label">INSERT PLAN / SELECT MIND / PRESS START</p>
+              <h2>上传你的项目计划书，获得大牛锐评以及你的 developer 人格画像。</h2>
+              <p class="speech-burst">Experience the magic of 8-bit feasibility.</p>
+            </div>
+            <div class="poster-mascot" aria-hidden="true">
+              <span class="mascot-console">
+                <span class="console-shine"></span>
+                <span class="mascot-screen">
+                  <span class="face-eye left"></span>
+                  <span class="face-eye right"></span>
+                  <span class="face-smile"></span>
+                </span>
+                <span class="dpad"></span>
+                <span class="button-red"></span>
+                <span class="button-green"></span>
+                <span class="button-blue"></span>
+                <span class="button-yellow"></span>
+                <span class="speaker-line one"></span>
+                <span class="speaker-line two"></span>
+                <span class="speaker-line three"></span>
+              </span>
+            </div>
+            <div class="rank-strip" aria-label="Rating scale">
+              <span>夯</span>
+              <span>顶级</span>
+              <span>人上人</span>
+              <span>npc</span>
+              <span>拉完了</span>
             </div>
           </section>
+
+          <section class="investor-deck" aria-labelledby="investorHeading">
+            <div class="deck-title" id="investorHeading">SELECT CHARACTER</div>
+            <div id="investorGrid" class="investor-grid"></div>
+          </section>
+
+          <section class="layout-grid">
+            <aside class="control-deck">
+              <div class="deck-title">PLAYER PROFILE</div>
+
+              <label class="file-slot" for="planFile">
+                <input id="planFile" type="file" accept=".txt,.md,.csv,.json,.pdf,.doc,.docx" multiple />
+                <span class="slot-icon" aria-hidden="true"></span>
+                <strong>UPLOAD PLAN(S)</strong>
+                <small>支持多项目上传。TXT/MD 最佳，PDF/DOCX MVP 阶段按浏览器可读取文本尝试。</small>
+              </label>
+              <div id="projectStack" class="project-stack" aria-live="polite"></div>
+
+              <label class="field-label" for="planText">项目计划书内容</label>
+              <textarea id="planText" spellcheck="false" placeholder="粘贴单个 business plan，或用 ---PROJECT--- 分隔多个项目..."></textarea>
+
+              <div class="form-grid">
+                <label>
+                  身份
+                  <select id="identity">
+                    <option value="student">Student</option>
+                    <option value="founder">Founder</option>
+                    <option value="employee">Employee</option>
+                    <option value="creator">Creator</option>
+                    <option value="small_business_owner">Small Business Owner</option>
+                  </select>
+                </label>
+
+                <label>
+                  阶段
+                  <select id="stage">
+                    <option value="idea">Idea</option>
+                    <option value="prototype">Prototype</option>
+                    <option value="launched">Launched</option>
+                  </select>
+                </label>
+
+                <label>
+                  目的
+                  <select id="goal">
+                    <option value="competition">Competition</option>
+                    <option value="fundraising">Fundraising</option>
+                    <option value="coursework">Coursework</option>
+                    <option value="startup_validation">Startup Validation</option>
+                    <option value="social_media">Social Media</option>
+                  </select>
+                </label>
+
+                <label>
+                  风险偏好
+                  <select id="riskPreference">
+                    <option value="balanced">Balanced</option>
+                    <option value="conservative">Conservative</option>
+                    <option value="aggressive">Aggressive</option>
+                  </select>
+                </label>
+              </div>
+
+              <button id="analyzeBtn" class="start-button" type="button">
+                <span>START</span>
+                RUN ANALYSIS
+              </button>
+              <p id="status" class="status-line" role="status">READY</p>
+            </aside>
+
+            <section class="result-deck" aria-labelledby="reportHeading">
+              <div class="deck-title" id="reportHeading">RESULT SCREEN</div>
+              <div id="loadingPanel" class="loading-panel hidden" aria-hidden="true">
+                <div class="pixel-loader">
+                  <span></span>
+                </div>
+                <p id="loadingText">PARSING PLAN...</p>
+              </div>
+
+              <article id="report" class="report empty">
+                <p class="blink">等待输入。选择投资人，上传或粘贴计划书，然后按 START。</p>
+                <p>输出包含 rating、六维度评分、persona-style verdict、关键风险和分享卡片。</p>
+              </article>
+
+              <aside id="shareCard" class="share-card hidden" aria-label="Share card preview"></aside>
+              <button id="downloadCardBtn" class="secondary-button hidden" type="button">DOWNLOAD PIXEL CARD</button>
+            </section>
+          </section>
         </div>
+
+        <footer class="console-footer">
+          <span>STYLE-INSPIRED ONLY</span>
+          <span>NOT REAL INVESTMENT ADVICE</span>
+          <span>BUILD: MVP-01</span>
+        </footer>
       </section>
     </main>
 
     <template id="investorTemplate">
       <button class="investor-card" type="button">
-        <span class="pixel-portrait" aria-hidden="true">
-          <span class="hair"></span>
-          <span class="head"></span>
-          <span class="eye left"></span>
-          <span class="eye right"></span>
-          <span class="nose"></span>
-          <span class="mouth"></span>
-          <span class="suit"></span>
-          <span class="tie"></span>
+        <span class="avatar-frame">
+          <span class="avatar-sprite" aria-hidden="true"></span>
         </span>
-        <span class="investor-name"></span>
-        <span class="investor-style"></span>
+        <span class="investor-meta">
+          <strong class="investor-name"></strong>
+          <small class="investor-domain"></small>
+          <em class="investor-tag"></em>
+        </span>
       </button>
     </template>
 

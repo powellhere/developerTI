@@ -1,8 +1,8 @@
 {
-  "name": "win95-investor-mvp",
+  "name": "developer-ti",
   "version": "1.0.0",
   "private": true,
-  "description": "Win95 style investor critique MVP with static frontend and Node backend.",
+  "description": "Retro handheld game style project feasibility ranking MVP.",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js"
