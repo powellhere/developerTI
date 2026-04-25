@@ -25,6 +25,19 @@ const resultDeck = document.querySelector(".result-deck");
 const toleranceInput = document.querySelector("#tolerance");
 const toleranceValue = document.querySelector("#toleranceValue");
 
+const investorSoundFiles = {
+  paul_graham: "paul.mp3",
+  zhang_yiming: "张一鸣.mp3",
+  kris_jenner: "kris jenner.mp3",
+  mrbeast: "mrbeast.mp3",
+  trump: "trump.mp3",
+  jobs: "jobs.mp3",
+  musk: "elonmusk.mp3"
+};
+
+const investorSoundCache = new Map();
+let soundUnlocked = false;
+
 let selectedInvestor = "paul_graham";
 let latestShareCard = null;
 let uploadedProjects = [];
@@ -85,6 +98,48 @@ function renderProjectStack() {
     .join("");
 }
 
+function getInvestorSoundSrc(investorId) {
+  const fileName = investorSoundFiles[investorId];
+  if (!fileName) return "";
+  const basePath = window.location.protocol === "file:" ? "../sound effect/" : "/sound-effect/";
+  return `${basePath}${encodeURIComponent(fileName)}`;
+}
+
+function getInvestorAudio(investorId) {
+  const src = getInvestorSoundSrc(investorId);
+  if (!src) return null;
+
+  let audio = investorSoundCache.get(investorId);
+  if (!audio) {
+    audio = new Audio(src);
+    audio.preload = "auto";
+    audio.volume = 0.52;
+    investorSoundCache.set(investorId, audio);
+  }
+
+  return audio;
+}
+
+function unlockInvestorSounds() {
+  soundUnlocked = true;
+  Object.keys(investorSoundFiles).forEach((investorId) => {
+    const audio = getInvestorAudio(investorId);
+    if (audio) audio.load();
+  });
+}
+
+function playInvestorSound(investorId) {
+  const audio = getInvestorAudio(investorId);
+  if (!audio) return;
+
+  audio.pause();
+  audio.currentTime = 0;
+  audio.play().catch(() => {
+    soundUnlocked = false;
+    setStatus("浏览器拦截了 hover 音效：先点击一次导师卡片，之后悬停就会发声。");
+  });
+}
+
 function splitTextProjects(text) {
   const chunks = text
     .split(/\n\s*---PROJECT---\s*\n/i)
@@ -117,11 +172,19 @@ function renderInvestors() {
     node.querySelector(".investor-domain").textContent = investor.domain;
     node.querySelector(".investor-tag").textContent = investor.tag;
     node.addEventListener("click", () => {
+      unlockInvestorSounds();
       selectedInvestor = investor.id;
       document.querySelectorAll(".investor-card").forEach((card) => {
         card.setAttribute("aria-pressed", String(card.dataset.investor === selectedInvestor));
       });
       setStatus(`已选择：${investor.name}`);
+      playInvestorSound(investor.id);
+    });
+    node.addEventListener("pointerenter", () => {
+      if (soundUnlocked) playInvestorSound(investor.id);
+    });
+    node.addEventListener("focus", () => {
+      if (soundUnlocked) playInvestorSound(investor.id);
     });
     investorGrid.appendChild(node);
   });

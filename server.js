@@ -4,6 +4,7 @@ const path = require("path");
 
 const PORT = process.env.PORT || 4173;
 const PUBLIC_DIR = path.join(__dirname, "public");
+const SOUND_DIR = path.join(__dirname, "sound effect");
 
 const dimensions = [
   "logicalCoherence",
@@ -157,7 +158,10 @@ const mimeTypes = {
   ".js": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
   ".svg": "image/svg+xml",
-  ".png": "image/png"
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".mp3": "audio/mpeg"
 };
 
 function sendJson(res, status, body) {
@@ -887,6 +891,33 @@ function serveStatic(req, res) {
   });
 }
 
+function serveSoundEffect(req, res) {
+  const urlPath = decodeURIComponent(req.url.split("?")[0]);
+  const requestedFile = urlPath.replace(/^\/sound-effect\//, "");
+  const safePath = path.normalize(requestedFile).replace(/^(\.\.[/\\])+/, "");
+  const filePath = path.join(SOUND_DIR, safePath);
+
+  if (!filePath.startsWith(SOUND_DIR + path.sep)) {
+    res.writeHead(403);
+    res.end("Forbidden");
+    return;
+  }
+
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("Not found");
+      return;
+    }
+    const ext = path.extname(filePath);
+    res.writeHead(200, {
+      "Content-Type": mimeTypes[ext] || "application/octet-stream",
+      "Cache-Control": "public, max-age=3600"
+    });
+    res.end(data);
+  });
+}
+
 const server = http.createServer(async (req, res) => {
   if (req.method === "GET" && req.url === "/api/health") {
     sendJson(res, 200, { ok: true });
@@ -905,6 +936,10 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === "GET") {
+    if (req.url.split("?")[0].startsWith("/sound-effect/")) {
+      serveSoundEffect(req, res);
+      return;
+    }
     serveStatic(req, res);
     return;
   }
