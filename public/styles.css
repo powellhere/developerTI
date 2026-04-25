@@ -194,19 +194,6 @@ h3 {
   font-size: 22px;
 }
 
-.power-light {
-  display: grid;
-  width: 64px;
-  height: 64px;
-  place-items: center;
-  color: var(--yellow);
-  font-size: 30px;
-  background: #5c5235;
-  border: var(--outline-thin);
-  border-radius: 50%;
-  box-shadow: 4px 5px 0 rgba(68, 35, 12, 0.24);
-}
-
 .screen {
   position: relative;
   z-index: 1;
