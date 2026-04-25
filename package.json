@@ -1,0 +1,13 @@
+{
+  "name": "win95-investor-mvp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Win95 style investor critique MVP with static frontend and Node backend.",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

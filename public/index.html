@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Investor.exe - Win95 投资人批判分析器</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="desktop">
+      <section class="window shell" aria-label="Win95 investor analyzer">
+        <header class="title-bar">
+          <div class="title-left">
+            <span class="app-icon" aria-hidden="true"></span>
+            <span>INVESTOR_CRITIC.EXE</span>
+          </div>
+          <div class="window-controls" aria-hidden="true">
+            <span>_</span><span>□</span><span>×</span>
+          </div>
+        </header>
+
+        <div class="menu-bar">
+          <span>File</span>
+          <span>Investor</span>
+          <span>Report</span>
+          <span>Help</span>
+        </div>
+
+        <div class="workspace">
+          <aside class="panel control-panel">
+            <div class="panel-title">PROJECT PLAN INPUT</div>
+            <label class="file-drop" for="planFile">
+              <input id="planFile" type="file" accept=".txt,.md,.csv,.json,.pdf,.doc,.docx" />
+              <span class="disk-icon" aria-hidden="true"></span>
+              <strong>Upload plan file</strong>
+              <small>TXT/MD 最佳；PDF/DOCX 在 MVP 中按文本尝试读取</small>
+            </label>
+
+            <label class="field-label" for="planText">或直接粘贴计划书内容</label>
+            <textarea id="planText" spellcheck="false" placeholder="Paste your business plan, pitch memo, or project proposal here..."></textarea>
+
+            <button id="analyzeBtn" class="win-button primary" type="button">Run Critical Analysis</button>
+            <div id="status" class="status-line" role="status">STATUS: WAITING_FOR_INPUT</div>
+          </aside>
+
+          <section class="panel investor-panel">
+            <div class="panel-title">SELECT INVESTOR PERSONALITY</div>
+            <div id="investorGrid" class="investor-grid" aria-label="Investor grid"></div>
+          </section>
+
+          <section class="window report-window">
+            <header class="title-bar report-title">
+              <div class="title-left">
+                <span class="doc-icon" aria-hidden="true"></span>
+                <span>CRITICAL_REPORT.TXT</span>
+              </div>
+              <div class="window-controls" aria-hidden="true">
+                <span>_</span><span>□</span><span>×</span>
+              </div>
+            </header>
+            <div id="report" class="report empty">
+              <p class="blink">选择一位投资人，并上传项目计划书。</p>
+              <p>系统会输出 feasibility、critical risks 和 minimum MVP logic。</p>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <template id="investorTemplate">
+      <button class="investor-card" type="button">
+        <span class="pixel-portrait" aria-hidden="true">
+          <span class="hair"></span>
+          <span class="head"></span>
+          <span class="eye left"></span>
+          <span class="eye right"></span>
+          <span class="nose"></span>
+          <span class="mouth"></span>
+          <span class="suit"></span>
+          <span class="tie"></span>
+        </span>
+        <span class="investor-name"></span>
+        <span class="investor-style"></span>
+      </button>
+    </template>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
