@@ -1,8 +1,8 @@
 # DeveloperTI
 
-一个复古 1980s handheld game poster 风格的项目计划书锐评 MVP。
+一个复古游戏机风格的项目计划书锐评 MVP。
 
-用户可以上传一个或多个项目计划书，选择一位 style-inspired 大牛视角，系统会从多个商业维度生成可行性评分、从「夯」到「拉完了」的排行，以及 developer 人格画像分享卡片。
+用户可以上传一个或多个项目计划书，选择一位大牛视角，系统会从多个商业维度生成可行性评分、从「夯」到「拉」的排行，以及 developer 人格画像分享卡片。
 
 > 这是一个娱乐化、传播导向的商业分析 MVP，不代表任何真实人物观点，也不是 investment advice。
 
@@ -34,40 +34,7 @@
   - 拉完了
 - developer 人格画像分享卡片。
 - PNG 分享卡片下载。
-
-## 视觉方向
-
-当前前端采用复古游戏海报风：
-
-- warm cream paper background
-- thick imperfect brown ink outlines
-- muted teal cartoon handheld console
-- hand-printed typography
-- vintage screen-print grain
-- pixel investor avatars
-
-主要视觉资源在：
-
-```text
-public/assets/investor-avatars.png
-```
-
-## 项目结构
-
-```text
-.
-├── MVP_SPEC.md
-├── README.md
-├── package.json
-├── server.js
-└── public/
-    ├── app.js
-    ├── index.html
-    ├── styles.css
-    └── assets/
-        └── investor-avatars.png
-```
-
+- 
 ## 如何运行
 
 需要 Node.js 18 或以上版本。
@@ -104,62 +71,6 @@ PORT=3000 npm start
    - Key Risks
    - Next Actions
    - developer 人格画像分享卡片
-
-## 分析逻辑
-
-当前版本是规则型 MVP，不调用外部 LLM。
-
-后端会根据项目文本中的关键词、文本结构、用户画像和 persona 权重进行启发式评分。每个 persona 有不同的关注重点，例如：
-
-- Paul Graham 偏向 pain point、用户真实需求和创业本质。
-- 张一鸣偏向长期 context、底层变量和执行系统。
-- Karpathy 偏向工程实现、原型验证和技术可解释性。
-- Ilya 偏向研究品味、技术壁垒和重要性判断。
-- MrBeast 偏向传播钩子、留存和内容飞轮。
-- 特朗普偏向 deal、attention、leverage 和商业包装。
-- 乔布斯偏向产品聚焦、审美和端到端体验。
-- 马斯克偏向 first principles、工程约束和快速制造。
-
-最终分数会映射为：
-
-| 分数 | 等级 |
-| --- | --- |
-| 90-100 | 夯 |
-| 75-89 | 顶级 |
-| 60-74 | 人上人 |
-| 40-59 | npc |
-| 0-39 | 拉完了 |
-
-## API
-
-### `POST /api/analyze`
-
-请求示例：
-
-```json
-{
-  "investor": "paul_graham",
-  "userProfile": {
-    "identity": "student",
-    "stage": "idea",
-    "goal": "competition",
-    "riskPreference": "balanced"
-  },
-  "projects": [
-    {
-      "name": "AI Study Buddy",
-      "text": "..."
-    }
-  ]
-}
-```
-
-响应包含：
-
-- `report`：最高分项目的详细报告
-- `reports`：所有项目报告
-- `ranking`：多项目排行
-- `shareCard`：分享卡片数据
 
 ## 当前限制
 
